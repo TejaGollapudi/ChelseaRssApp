@@ -14,10 +14,17 @@ public class ChelseaFeed {
     private String link;
     private String description;
     private Date date;
+    private String imgurl;
+    ChelseaFeed(){
+        imgurl="a";
+    }
 
     public String getLink() {
         return link;
     }
+
+    public String getImgurl(){return imgurl;}
+    public void setImgurl(String imgurl){this.imgurl=imgurl;}
 
     public void setLink(String link) {
         this.link = link;
@@ -57,6 +64,7 @@ public class ChelseaFeed {
                 ", link='" + link + '\'' +
                 ", description='" + description + '\'' +
                 ", date='" + date.toString() + '\'' +
+                "img  :"+imgurl+"?????????????"+
                 '}';
     }
 }

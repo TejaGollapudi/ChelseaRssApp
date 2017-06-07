@@ -2,6 +2,7 @@ package com.example.teja.threads;
 
 import android.os.AsyncTask;
 import android.provider.DocumentsContract;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.EventLogTags;
@@ -26,22 +27,56 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = "MainActivity";
     private ListView listView;
     private WebView w;
+    SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView =(ListView) findViewById(R.id.listView);
+        swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
 
         DownloadData downloadData =new DownloadData();
-        downloadData.execute("http://talksport.com/rss/football/chelsea/feed","http://www.football.co.uk/teams/chelsea/rss.xml");
+        downloadData.execute("http://talksport.com/rss/football/chelsea/feed","http://www.football.co.uk/teams/chelsea/rss.xml","http://www.dailymail.co.uk/sport/teampages/chelsea.rss");
         Log.d(TAG, "onCreate: sd");
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                    Log.d(TAG,"refresh called ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////");
+                    DownloadData downloadData =new DownloadData();
+                    downloadData.execute("http://talksport.com/rss/football/chelsea/feed","http://www.football.co.uk/teams/chelsea/rss.xml","http://www.dailymail.co.uk/sport/teampages/chelsea.rss");
+                    Log.d(TAG, "onRefresh: sd");
+
+
+//code for updating screen
+
+//following line is important to stop animation for refreshing
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
     }
+
+    @Override
+    public void onRefresh() {
+        Log.d(TAG,"refresh called ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////");
+        DownloadData downloadData =new DownloadData();
+        downloadData.execute("http://talksport.com/rss/football/chelsea/feed","http://www.football.co.uk/teams/chelsea/rss.xml","http://www.dailymail.co.uk/sport/teampages/chelsea.rss");
+        Log.d(TAG, "onRefresh: sd");
+
+
+//code for updating screen
+
+//following line is important to stop animation for refreshing
+        swipeRefreshLayout.setRefreshing(false);
+
+    }
+
 
     private  class DownloadData extends AsyncTask<String,Void,String>{
         private static final String TAG = "DownloadData";
@@ -51,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.listView).setVisibility(View.VISIBLE);
         findViewById(R.id.imageView3).setVisibility(View.INVISIBLE);
            // findViewById(R.id.imageView2).setVisibility(View.INVISIBLE);
+
             String [] de=s.split("lalallalalalalalaalalalalullalalalalalalalalalalalalalalalalalalalalala");
 
           /*  ParseXml parseXml =new ParseXml();
@@ -60,14 +96,19 @@ public class MainActivity extends AppCompatActivity {
  //      listView.setAdapter(arrayAdapter);*/
          ParseChelsea parseChelsea=new ParseChelsea();
             ParseChelsea parseChelsea1=new ParseChelsea();
+            ParseChelsea parseChelsea2=new ParseChelsea();
             parseChelsea.parse(de[0]);
             parseChelsea1.parse(de[1]);
+            parseChelsea2.parse(de[2]);
+Log.d(TAG,de[2]);
             ArrayList<ChelseaFeed> p1 = parseChelsea.getApps();
             ArrayList<ChelseaFeed> p2=parseChelsea1.getApps();
-            Log.d(TAG,"p1 length"+p1.size());
-            Log.d(TAG,"p1 length"+p2.size());
+            ArrayList<ChelseaFeed> p3=parseChelsea2.getApps();
+           // Log.d(TAG,"p1 length"+p1.size());
+           // Log.d(TAG,"p1 length"+p2.size());
             p1.addAll(p2);
-            Log.d(TAG,"p1 and p2 length"+p1.size());
+            p1.addAll(p3);
+            //Log.d(TAG,"p1 and p2 length"+p1.size());
             int i;
             Log.d(TAG, "onPostExecute:wooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                     "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooocxgb ");
@@ -84,13 +125,15 @@ public class MainActivity extends AppCompatActivity {
          //   listView.setAdapter(arrayAdapter);
           FeedAdapter feedAdapter=new FeedAdapter(MainActivity.this,R.layout.list_record,p1);
             listView.setAdapter(feedAdapter);
+
         }
 
         @Override
         protected String doInBackground(String... strings) {
-            Log.d(TAG, "doInBackground:" +strings[0]);
+          //  Log.d(TAG, "doInBackground:" +strings[0]);
             String rssFeed =downloadXML(strings[0]);
             String rssFeed2=downloadXML(strings[1]);
+            String rssFeed3=downloadXML(strings[2]);
             if(rssFeed==null)
             {
                 Log.e(TAG,"rssfeed url is none");
@@ -98,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             String a;
             a=rssFeed+"lalallalalalalalaalalalalullalalalalalalalalalalalalalalalalalalalalala";
             String c;
-            c=a+rssFeed2;
+            c=a+rssFeed2+"lalallalalalalalaalalalalullalalalalalalalalalalalalalalalalalalalalala"+rssFeed3;
             return c;
 
         }
@@ -108,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 URL url=new URL(urlPath);
                 HttpURLConnection connection =(HttpURLConnection) url.openConnection();
                 int response=connection.getResponseCode();
-               Log.d(TAG,"url response" +response);
+            //   Log.d(TAG,"url response" +response);
                 InputStream st=connection.getInputStream();
                 InputStreamReader inp=new InputStreamReader(st);
                 BufferedReader bf=new BufferedReader(inp);
@@ -126,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 bf.close();
-                Log.d(TAG,xmlResult.toString());
+              //  Log.d(TAG,xmlResult.toString());
                 return xmlResult.toString();
             }
 

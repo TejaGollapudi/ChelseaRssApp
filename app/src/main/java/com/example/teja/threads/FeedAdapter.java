@@ -1,13 +1,20 @@
 package com.example.teja.threads;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -37,13 +44,40 @@ public class FeedAdapter extends ArrayAdapter {
         }
 
 
-        ChelseaFeed currentnews=apps.get(position);
+        final ChelseaFeed currentnews=apps.get(position);
 
        viewHolder.name.setText(currentnews.getTitle());
-        viewHolder.link.setText(currentnews.getLink());
+      //  viewHolder.link.setText(currentnews.getLink());
         viewHolder.des.setText(currentnews.getDescription());
         viewHolder.date.setText(currentnews.getDate().toString());
+        //Loading Image from URL
+        Picasso.with(getContext())
+                .load(currentnews.getImgurl()).placeholder(R.drawable.placeholder)
+                .error(R.drawable.index)
+                .resize(450,320)
+                .into(viewHolder.img);
+try {
+    viewHolder.img.setOnClickListener(new View.OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            String url=currentnews.getLink();
+            if (!url.startsWith("https://") && !url.startsWith("http://")){
+                Log.d("ds","misformed url");
+                url=url.substring(2);
+            }
+            intent.setData(Uri.parse(url));
+            Log.d("dfdsdfs",url);
+            getContext().startActivity(intent);
+        }
+
+    });
+}
+        catch (ActivityNotFoundException e)
+        {
+            Log.d("sd","activity not found");
+        }
         return convertView;
+
     }
 
 
@@ -52,11 +86,14 @@ public class FeedAdapter extends ArrayAdapter {
         final TextView link;
         final TextView des;
         final TextView date;
+        final ImageView img;
         ViewHolder (View v){
             this.name=(TextView) v.findViewById(R.id.idName);
             this.link=(TextView) v.findViewById(R.id.idLink);
             this.des=(TextView)  v.findViewById(R.id.idTextDescrpition);
             this.date=(TextView) v.findViewById(R.id.date);
+            this.img=(ImageView) v.findViewById(R.id.imageView2);
+
 
         }
 

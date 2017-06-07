@@ -58,9 +58,13 @@ public class ParseChelsea {
                                 currentRecord.setLink(textValue);
                             } else if ("description".equalsIgnoreCase(tagname)) {
                                 currentRecord.setDescription(textValue);
+
                             }
                             else if ("pubdate".equalsIgnoreCase(tagname)) {
                                 currentRecord.setDate(textValue);
+                            }
+                            else if("enclosure".equalsIgnoreCase(tagname)){
+                                currentRecord.setImgurl(xpp.getAttributeValue(null,"url"));
                             }
                         }
                         break;
@@ -70,8 +74,8 @@ public class ParseChelsea {
                 eventType=xpp.next();
             }
             for(ChelseaFeed app:apps){
-                Log.d(TAG,"---------------------");
-                Log.d(TAG,app.toString());
+                //Log.d(TAG,"---------------------");
+                //Log.d(TAG,app.toString());
             }
 
         }catch(Exception e){
