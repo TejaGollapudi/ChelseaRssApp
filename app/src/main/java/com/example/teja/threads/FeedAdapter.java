@@ -56,7 +56,7 @@ public class FeedAdapter extends ArrayAdapter {
                 .error(R.drawable.index)
                 .resize(450,320)
                 .into(viewHolder.img);
-try {
+/*try {
     viewHolder.img.setOnClickListener(new View.OnClickListener() {
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -76,6 +76,7 @@ try {
         {
             Log.d("sd","activity not found");
         }
+        */
         return convertView;
 
     }

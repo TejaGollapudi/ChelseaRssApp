@@ -1,7 +1,12 @@
 package com.example.teja.threads;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.DocumentsContract;
+import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +16,7 @@ import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -101,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             parseChelsea1.parse(de[1]);
             parseChelsea2.parse(de[2]);
 Log.d(TAG,de[2]);
-            ArrayList<ChelseaFeed> p1 = parseChelsea.getApps();
+            final ArrayList<ChelseaFeed> p1 = parseChelsea.getApps();
             ArrayList<ChelseaFeed> p2=parseChelsea1.getApps();
             ArrayList<ChelseaFeed> p3=parseChelsea2.getApps();
            // Log.d(TAG,"p1 length"+p1.size());
@@ -125,6 +131,31 @@ Log.d(TAG,de[2]);
          //   listView.setAdapter(arrayAdapter);
           FeedAdapter feedAdapter=new FeedAdapter(MainActivity.this,R.layout.list_record,p1);
             listView.setAdapter(feedAdapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,
+                                        long id) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    String url=p1.get(position).getLink();
+                    if (!url.startsWith("https://") && !url.startsWith("http://")){
+                        Log.d("ds","misformed url");
+                        url=url.substring(2);
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putString("url", url );
+                    Fragment web = new Web();
+                    web.setArguments(bundle);
+
+                    FragmentManager manager = getFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.activity_main,web);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+
+
+
+                }
+            });
 
         }
 
