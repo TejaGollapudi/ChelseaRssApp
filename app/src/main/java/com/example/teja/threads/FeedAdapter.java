@@ -48,11 +48,11 @@ public class FeedAdapter extends ArrayAdapter {
 
        viewHolder.name.setText(currentnews.getTitle());
       //  viewHolder.link.setText(currentnews.getLink());
-        viewHolder.des.setText(currentnews.getDescription());
         viewHolder.date.setText(currentnews.getDate().toString());
         //Loading Image from URL
         Picasso.with(getContext())
-                .load(currentnews.getImgurl()).placeholder(R.drawable.placeholder)
+                .load(currentnews.getImgurl())
+                .placeholder(R.drawable.placeholder)
                 .error(R.drawable.index)
                 .resize(450,320)
                 .into(viewHolder.img);
@@ -84,14 +84,14 @@ public class FeedAdapter extends ArrayAdapter {
 
     private class ViewHolder{
         final TextView name;
-        final TextView link;
-        final TextView des;
+       // final TextView link;
+       // final TextView des;
         final TextView date;
         final ImageView img;
         ViewHolder (View v){
             this.name=(TextView) v.findViewById(R.id.idName);
-            this.link=(TextView) v.findViewById(R.id.idLink);
-            this.des=(TextView)  v.findViewById(R.id.idTextDescrpition);
+         //   this.link=(TextView) v.findViewById(R.id.idLink);
+           // this.des=(TextView)  v.findViewById(R.id.idTextDescrpition);
             this.date=(TextView) v.findViewById(R.id.date);
             this.img=(ImageView) v.findViewById(R.id.imageView2);
 

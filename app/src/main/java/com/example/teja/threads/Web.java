@@ -100,6 +100,7 @@ public class Web extends Fragment {
             super.onPageFinished(view, url);
         }
 
+
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             progress.setMessage("page loading..");

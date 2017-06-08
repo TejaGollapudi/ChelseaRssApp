@@ -3,6 +3,7 @@ package com.example.teja.threads;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.DocumentsContract;
@@ -19,6 +20,7 @@ import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.xml.sax.InputSource;
 
@@ -38,17 +40,23 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private ListView listView;
     private WebView w;
     SwipeRefreshLayout swipeRefreshLayout;
+    ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView =(ListView) findViewById(R.id.listView);
+        progressBar=(ProgressBar) findViewById(R.id.progressBar2);
         swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
+        progressBar.setProgress(0);
 
         DownloadData downloadData =new DownloadData();
         downloadData.execute("http://talksport.com/rss/football/chelsea/feed","http://www.football.co.uk/teams/chelsea/rss.xml","http://www.dailymail.co.uk/sport/teampages/chelsea.rss");
         Log.d(TAG, "onCreate: sd");
+
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -83,14 +91,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     }
 
+    @Override
+    public AssetManager getAssets() {
+        return getResources().getAssets();
+    }
+
 
     private  class DownloadData extends AsyncTask<String,Void,String>{
         private static final String TAG = "DownloadData";
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            progressBar.setVisibility(View.GONE);
             findViewById(R.id.listView).setVisibility(View.VISIBLE);
-        findViewById(R.id.imageView3).setVisibility(View.INVISIBLE);
+       // findViewById(R.id.imageView3).setVisibility(View.INVISIBLE);
            // findViewById(R.id.imageView2).setVisibility(View.INVISIBLE);
 
             String [] de=s.split("lalallalalalalalaalalalalullalalalalalalalalalalalalalalalalalalalalala");
@@ -159,6 +173,7 @@ Log.d(TAG,de[2]);
 
         }
 
+
         @Override
         protected String doInBackground(String... strings) {
           //  Log.d(TAG, "doInBackground:" +strings[0]);
@@ -175,6 +190,12 @@ Log.d(TAG,de[2]);
             c=a+rssFeed2+"lalallalalalalalaalalalalullalalalalalalalalalalalalalalalalalalalalala"+rssFeed3;
             return c;
 
+        }
+
+
+        protected void onProgressUpdate(Integer... values) {
+
+            progressBar.setProgress(values[0]);
         }
         private String downloadXML(String urlPath){
             StringBuilder xmlResult=new StringBuilder();
@@ -218,6 +239,7 @@ Log.d(TAG,de[2]);
             }
             return null;
         }
+
 
     }
     class DateComparator implements Comparator<ChelseaFeed> {
